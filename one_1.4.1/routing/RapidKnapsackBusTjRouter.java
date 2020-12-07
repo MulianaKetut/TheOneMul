@@ -918,7 +918,9 @@ public class RapidKnapsackBusTjRouter extends ActiveRouterForKnapsack {
             this.lengthMsgDrop.clear();
             this.tempMsgLowersUtil.clear();
             knapsackDrop(m);
-
+            if(m.equals(tempMsgLowersUtil)){
+                return false;
+            }
             for (Message msg : this.tempMsgLowersUtil) {
 //                if (msg.equals(m)) {
 //                    return false;
