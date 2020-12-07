@@ -183,57 +183,6 @@ public class RapidKnapsackBusTjRouter extends ActiveRouterForKnapsack {
         }
     }
 
-    public void ckeckConnectionStatus() {
-
-        DTNHost host = getHost();
-        int from = host.getAddress();
-        double checkPeriod = 0.0;
-
-        for (Connection con : getConnections()) {
-            DTNHost other = con.getOtherNode(host);
-            int to = other.getAddress();
-            RapidKnapsackBusTjRouter otherRouter = (RapidKnapsackBusTjRouter) other.getRouter();
-            MeetingEntry entry = otherRouter.getDelayTable().getMeetingEntry(from, to);
-            checkPeriod = SimClock.getTime() - UTILITY_INTERAL;
-
-            if (con.isUp() && entry.isOlderThan(checkPeriod)) {
-                // simulate artificial break 
-                //update connection
-                double time = (SimClock.getTime() - 0.1) - timestamp;
-                delayTable.updateConnection(con, time);
-
-                //synchronize acked message ids
-//                synchronizeAckedMessageIDs(con);
-                //update set of messages that are known to have reached the destination 
-                deleteAckedMessages();
-                updateAckedMessageIds();
-
-                //synchronize all delay table entries
-                synchronizeDelayTables(con);
-
-                // simulate artificial make
-                //simulate control channel on connection up without sending any data
-                timestamp = SimClock.getTime();
-
-                //synchronize all delay table entries
-                synchronizeDelayTables(con);
-
-                //synchronize all meeting time entries 
-                synchronizeMeetingTimes(con);
-
-                updateDelayTableStat(con);
-
-                //synchronize acked message ids
-//                synchronizeAckedMessageIDs(con);
-                deleteAckedMessages();
-
-                //map DTNHost to their address
-//                doHostMapping(con);
-                delayTable.dummyUpdateConnection(con);
-            }
-        }
-    }
-
     private void doHostMapping(Connection con) {
         DTNHost host = getHost();
         DTNHost otherHost = con.getOtherNode(host);
@@ -971,9 +920,9 @@ public class RapidKnapsackBusTjRouter extends ActiveRouterForKnapsack {
             knapsackDrop(m);
 
             for (Message msg : this.tempMsgLowersUtil) {
-                if (msg.equals(m)) {
-                    return false;
-                }
+//                if (msg.equals(m)) {
+//                    return false;
+//                }
                 if (this.hasMessage(msg.getId()) && !isSending(msg.getId())) {
                     deleteMessage(msg.getId(), true);
                 }
